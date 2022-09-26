@@ -143,7 +143,7 @@ class ObjectDetection:
                 
                 threading.Thread(target=typing_answer).start()
                 
-                # cv2.imshow('img_croped', img_crp)
+                
                 cv2.imshow('img1', img1)
                 cv2.imshow('img2', img2)
                 cv2.imshow('img3', img3)
