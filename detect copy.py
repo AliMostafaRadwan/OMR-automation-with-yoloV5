@@ -98,36 +98,38 @@ class ObjectDetection:
                 def click():
                     x,y = green_cell()
                     pyautogui.click(x, y)
-                    time.sleep(0.5)
+                    time.sleep(0.4)
                 click()
                 def typing_answer():
                     try:
                         locker.acquire()
                         if self.classes[int(results1[0][0])] == 'correct':
                             print("A")
-                            # time.sleep(0.5)
                             keyboard.press_and_release('a')
-                            time.sleep(0.4)
+                            time.sleep(0.1)
                             keyboard.press_and_release('enter')
+                            time.sleep(0.4)
                         elif self.classes[int(results2[0][0])] == 'correct':
                             print("B")
-                            # time.sleep(.5)
                             keyboard.press_and_release('b')
-                            time.sleep(0.4)
+                            time.sleep(0.1)
                             keyboard.press_and_release('enter')
+                            time.sleep(0.4)
+                            
                         elif self.classes[int(results3[0][0])] == 'correct':
                             print("C")
-                            # time.sleep(.5)
                             keyboard.press_and_release('c')
-                            time.sleep(0.4)
+                            time.sleep(0.1)
                             keyboard.press_and_release('enter')
+                            time.sleep(0.4)
                             
                         elif self.classes[int(results4[0][0])] == 'correct':
                             print("D")
-                            # time.sleep(.5)
                             keyboard.press_and_release('d')
-                            time.sleep(0.4)
+                            time.sleep(0.1)
                             keyboard.press_and_release('enter')
+                            time.sleep(0.4)
+                            
                     except Exception:
                         print("Can't detect")
                     finally:

@@ -15,8 +15,12 @@ def green_cell(delay=1):
             upper_green = np.array([85, 255, 255])
             mask = cv2.inRange(hsv, lower_green, upper_green)
             contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-            cv2.imshow("mask", mask)
-            cv2.waitKey(0)
+            # noiseless_image_bw = cv2.fastNlMeansDenoising(mask, None, 30, 30, 31)
+            # contours2, _ = cv2.findContours(noiseless_image_bw, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+            
+            # cv2.imshow("mask", img_crp)
+            # cv2.waitKey(0)
+            
             for cnt in contours:
                 x, y, w, h = cv2.boundingRect(cnt)
                 if w > 15 and h > 15:
@@ -27,6 +31,7 @@ def green_cell(delay=1):
                     # pyautogui.moveTo(x2, y2)
                     # pyautogui.click(x+330, y+270)
                     break
+            
             return x, y
-        
-green_cell()
+
+# green_cell()
