@@ -1,4 +1,5 @@
 
+from calendar import c
 import torch
 import numpy as np
 import cv2
@@ -94,38 +95,39 @@ class ObjectDetection:
                 img2 = self.plot_boxes(results2, img2)
                 img3 = self.plot_boxes(results3, img3)
                 img4 = self.plot_boxes(results4, img4)
-                x,y = green_cell()
+                def click():
+                    x,y = green_cell()
+                    pyautogui.click(x, y)
+                    time.sleep(0.5)
+                click()
                 def typing_answer():
                     try:
                         locker.acquire()
                         if self.classes[int(results1[0][0])] == 'correct':
                             print("A")
-                            time.sleep(1.5)
+                            # time.sleep(0.5)
                             keyboard.press_and_release('a')
                             time.sleep(0.4)
                             keyboard.press_and_release('enter')
-                            time.sleep(1.5)
                         elif self.classes[int(results2[0][0])] == 'correct':
                             print("B")
-                            time.sleep(1.5)
+                            # time.sleep(.5)
                             keyboard.press_and_release('b')
                             time.sleep(0.4)
                             keyboard.press_and_release('enter')
-                            time.sleep(1.5) 
                         elif self.classes[int(results3[0][0])] == 'correct':
                             print("C")
-                            time.sleep(1.5)
+                            # time.sleep(.5)
                             keyboard.press_and_release('c')
                             time.sleep(0.4)
                             keyboard.press_and_release('enter')
-                            time.sleep(1.5) 
+                            
                         elif self.classes[int(results4[0][0])] == 'correct':
                             print("D")
-                            time.sleep(1.5)
+                            # time.sleep(.5)
                             keyboard.press_and_release('d')
                             time.sleep(0.4)
                             keyboard.press_and_release('enter')
-                            time.sleep(1.5) 
                     except Exception:
                         print("Can't detect")
                     finally:
@@ -155,4 +157,3 @@ if __name__ == '__main__':
     locker.release()
     detection = ObjectDetection()
     detection()
-#
