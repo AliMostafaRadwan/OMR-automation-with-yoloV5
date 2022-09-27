@@ -95,59 +95,6 @@ class ObjectDetection:
                 if cv2.waitKey(25) & 0xFF == ord("q"):
                     cv2.destroyAllWindows()
                     break
-                
-                # def typing_answer():
-                #     try:
-                #         locker.acquire()
-                #         for _ in range(1):
-                #             if self.valid == False:
-                #                 if IS_EMPTY() == False and self.classes[int(results1[0][0])] == 'correct':
-                #                     print("letter :A")
-                #                     keyboard.press_and_release('a')
-                #                     time.sleep(0.1)
-                #                     keyboard.press_and_release('enter')
-                #                     time.sleep(1)
-                #                 break
-                #         for _ in range(1):
-                #             if self.valid == False:
-                #                 if IS_EMPTY() == False and self.classes[int(results2[0][0])] == 'correct':
-                #                     print("letter :B")
-                #                     keyboard.press_and_release('b')
-                #                     time.sleep(0.1)
-                #                     keyboard.press_and_release('enter')
-                #                     time.sleep(1)
-                #                     self.valid = True
-
-                #                 break
-                #         for _ in range(1):
-                #             if self.valid == False:
-                #                 if IS_EMPTY() == False and self.classes[int(results3[0][0])] == 'correct':
-                #                     print("letter :C")
-                #                     keyboard.press_and_release('c')
-                #                     time.sleep(0.1)
-                #                     keyboard.press_and_release('enter')
-                #                     time.sleep(1)
-                #                     self.valid = True
-                #                 break
-                #         for _ in range(1):
-                #             if self.valid == False:
-                #                 if IS_EMPTY() == False and self.classes[int(results4[0][0])] == 'correct':
-                #                     print("letter :D")
-                #                     keyboard.press_and_release('d')
-                #                     time.sleep(0.1)
-                #                     keyboard.press_and_release('enter')
-                #                     time.sleep(1)
-                #                     self.valid = True
-                #                 break
-                        
-                #         if self.valid == True:
-                            
-                #             self.valid = False
-                #     except Exception:
-                #         print("Can't detect", end='\r', flush=True)
-                #     finally:
-                #         locker.release()
-                # threading.Thread(target=typing_answer).start()
 
                 if win32api.GetAsyncKeyState(0x1B):
                     # kill the terminal
