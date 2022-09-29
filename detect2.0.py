@@ -25,8 +25,7 @@ class ObjectDetection:
 
 
     def load_model(self):
-        return torch.hub.load('ultralytics/yolov5', 'custom', path='one_at_time.pt',force_reload=True)
-
+        return torch.hub.load('ultralytics/yolov5', 'custom', path='best.pt',force_reload=True)
 
     def score_frame(self, frame):
         self.model.to(self.device)
@@ -72,7 +71,7 @@ class ObjectDetection:
                 bottom3= img_org[half2:, :]
                 bottom4 = img_org[half2:, :]
                 img_crp = img_org[200:700, 290:1850]
-                img4 = bottom4[230:390, 760:900]
+                img4 = bottom4[230:390, 740:900]
                 img3 = bottom3[230:390, 900:1050]
                 img2 = bottom2[230:390, 1050:1200]
                 img1 = bottom1[230:390, 1190:1380]
@@ -105,7 +104,7 @@ class ObjectDetection:
                                     keyboard.press_and_release('a')
                                     time.sleep(0.1)
                                     keyboard.press_and_release('enter')
-                                    time.sleep(1)
+                                    time.sleep(0.8)
                                 break
                         for _ in range(1):
                             if self.valid == False:
@@ -114,7 +113,7 @@ class ObjectDetection:
                                     keyboard.press_and_release('b')
                                     time.sleep(0.1)
                                     keyboard.press_and_release('enter')
-                                    time.sleep(1)
+                                    time.sleep(0.8)
                                     self.valid = True
 
                                 break
@@ -125,7 +124,7 @@ class ObjectDetection:
                                     keyboard.press_and_release('c')
                                     time.sleep(0.1)
                                     keyboard.press_and_release('enter')
-                                    time.sleep(1)
+                                    time.sleep(0.8)
                                     self.valid = True
                                 break
                         for _ in range(1):
@@ -135,7 +134,16 @@ class ObjectDetection:
                                     keyboard.press_and_release('d')
                                     time.sleep(0.1)
                                     keyboard.press_and_release('enter')
-                                    time.sleep(1)
+                                    time.sleep(0.8)
+                                    self.valid = True
+                                break
+                            
+                        for _ in range(1):
+                            if self.valid == False:
+                                if IS_EMPTY() == False and self.classes[int(results4[0][0])] != 'correct' and self.classes[int(results3[0][0])] != 'correct' and self.classes[int(results2[0][0])] != 'correct' and self.classes[int(results1[0][0])] != 'correct':
+                                    print("Can't decide")
+                                    keyboard.press_and_release('enter')
+                                    time.sleep(0.8)
                                     self.valid = True
                                 break
                         

@@ -12,7 +12,7 @@ import pyautogui
 import os
 
 
-class ObjectDetection:
+class Detection:
     
     def __init__(self):
         # run it on gpu if available
@@ -170,5 +170,5 @@ if __name__ == '__main__':
     p1 = multiprocessing.Process(target=green_cell)
     p1.start()
     locker.release()
-    detection = ObjectDetection()
+    detection = Detection()
     detection()

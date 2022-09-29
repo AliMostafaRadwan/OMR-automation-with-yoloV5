@@ -10,8 +10,6 @@ import time
 import multiprocessing
 import pyautogui
 import os
-
-
 class ObjectDetection:
     
     def __init__(self):
@@ -22,10 +20,8 @@ class ObjectDetection:
         self.valid = False
         print("\n\nDevice Used:",self.device)
 
-
-
     def load_model(self):
-        return torch.hub.load('ultralytics/yolov5', 'custom', path='one_at_time.pt',force_reload=True)
+        return torch.hub.load('model_repo\yolov5', model='custom', path='best.pt', source='local', force_reload=True)
 
 
     def score_frame(self, frame):
@@ -65,33 +61,49 @@ class ObjectDetection:
             while "Screen capturing":
                 screen = sct.grab(monitor)
                 img_org = np.array(screen)
+                img_org2 = np.array(screen)
                 h, w, channels = img_org.shape
                 half2 = h//2
                 bottom1 = img_org[half2:, :]
                 bottom2 = img_org[half2:, :]
                 bottom3= img_org[half2:, :]
                 bottom4 = img_org[half2:, :]
-
+                
+                bottom_whole= img_org2[half2:, :]
+                
                 img_crp = img_org[200:700, 290:1850]
-                img4 = bottom4[230:390, 760:900]
+                img4 = bottom4[230:390, 740:900]
                 img3 = bottom3[230:390, 900:1050]
                 img2 = bottom2[230:390, 1050:1200]
                 img1 = bottom1[230:390, 1190:1380]
+                img_whole = bottom_whole[230:390, 760:1380]
 
                 results1 = self.score_frame(img1)
                 results2 = self.score_frame(img2)
                 results3 = self.score_frame(img3)
                 results4 = self.score_frame(img4)
+                
+                results_whole = self.score_frame(img_whole)
 
+                
+                print(self.classes[int(results1[0][0])])
+                print(self.classes[int(results2[0][0])])
+                print(self.classes[int(results3[0][0])])
+                print(self.classes[int(results4[0][0])])
+                
+                
+                
                 # img = self.plot_boxes(results1, img)
                 img1 = self.plot_boxes(results1, img1)
                 img2 = self.plot_boxes(results2, img2)
                 img3 = self.plot_boxes(results3, img3)
                 img4 = self.plot_boxes(results4, img4)
+                img_whole = self.plot_boxes(results_whole, img_whole)
                 cv2.imshow('img1', img1)
                 cv2.imshow('img2', img2)
                 cv2.imshow('img3', img3)
                 cv2.imshow('img4', img4)
+                # cv2.imshow('whole',img_whole)
                 if cv2.waitKey(25) & 0xFF == ord("q"):
                     cv2.destroyAllWindows()
                     break
