@@ -15,6 +15,9 @@ import os
 class ObjectDetection:
     
     def __init__(self):
+        """
+        The function loads the model, gets the classes, and sets the device to GPU if available
+        """
         # run it on gpu if available
         self.model = self.load_model()
         self.classes = self.model.names
@@ -23,10 +26,21 @@ class ObjectDetection:
         print("\n\nDevice Used:",self.device)
 
 
+    """
+    > Loads the model from the path specified in the function
+    :return: The model is being returned.
+    """
 
     def load_model(self):
         return torch.hub.load('ultralytics/yolov5', 'custom', path='best.pt',force_reload=True)
 
+    """
+    > The function takes a single frame as input, and returns the labels and coordinates of the detected
+    objects
+    
+    :param frame: a single image
+    :return: The labels and the cordinates of the bounding boxes.
+    """
     def score_frame(self, frame):
         self.model.to(self.device)
         frame = [frame]
@@ -34,11 +48,26 @@ class ObjectDetection:
         labels, cord = results.xyxyn[0][:, -1], results.xyxyn[0][:, :-1]
         return labels, cord
 
+    """
+    > This function takes in a class number and returns the corresponding class label
+    
+    :param x: the input data
+    :return: The class of the image.
+    """
 
     def class_to_label(self, x):
         return self.classes[int(x)]
 
 
+    """
+    > The function takes in the results of the model and the frame, and returns the frame with the boxes
+    drawn on it
+    
+    :param results: a list of tuples, each tuple contains the label and the coordinates of the bounding
+    box
+    :param frame: The image to be processed
+    :return: the frame with the boxes drawn on it.
+    """
     def plot_boxes(self, results, frame):
         labels, cord = results
         n = len(labels)
@@ -53,9 +82,13 @@ class ObjectDetection:
                 cv2.putText(frame, self.class_to_label(labels[i]), (x1, y1), cv2.FONT_HERSHEY_SIMPLEX, 0.9, bgr, 2)
                 cv2.putText(frame, f'{row[4]:.2f}', (x1, y1+20), cv2.FONT_HERSHEY_SIMPLEX, 0.9, bgr2, 2)
         return frame
+# A global variable that is used to lock the thread.
     global locker
     locker = threading.Lock()
     def __call__(self):
+        """
+        It starts a new thread that calls the main function
+        """
         threading.Thread(target=self.main).start()
 
     def main(self):  # sourcery skip: merge-nested-ifs
@@ -94,6 +127,7 @@ class ObjectDetection:
                     cv2.destroyAllWindows()
                     break
                 
+# A function that is used to type the answer.
                 def typing_answer():
                     try:
                         locker.acquire()
@@ -150,6 +184,7 @@ class ObjectDetection:
                         if self.valid == True:
                             
                             self.valid = False
+# A try-except block that is used to catch any exception that might occur in the function.
                     except Exception:
                         print("Can't detect", end='\r', flush=True)
                     finally:
@@ -161,7 +196,7 @@ class ObjectDetection:
                     os.system("taskkill /f /im cmd.exe")
                     break
 
-
+# Creating a new process for the green_cell function
 if __name__ == '__main__':
     locker.acquire()
     p1 = multiprocessing.Process(target=green_cell)
