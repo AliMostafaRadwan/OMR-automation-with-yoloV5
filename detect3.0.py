@@ -1,16 +1,11 @@
-import contextlib
-from cgitb import text
+
 import torch
 import numpy as np
 import cv2
 import mss
-import win32api
 import threading
 import keyboard
 import time
-import multiprocessing
-import pyautogui
-import os
 import tkinter
 from tkinter import *
 from tkinter import ttk
@@ -27,6 +22,7 @@ class ObjectDetection:
         self.classes = self.model.names
         self.device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
         self.valid = False
+        self.count = 0
         print("\n\nDevice Used:",self.device)
 
 
@@ -36,7 +32,7 @@ class ObjectDetection:
     """
 
     def load_model(self):
-        return torch.hub.load('ultralytics/yolov5', 'custom', path='best.pt',force_reload=True)
+        return torch.hub.load('model_repo\yolov5', model='custom', path='best.pt', source='local', force_reload=True)
 
     """
     > The function takes a single frame as input, and returns the labels and coordinates of the detected
@@ -210,6 +206,8 @@ class ObjectDetection:
                                         time.sleep(0.1)
                                         keyboard.press_and_release('enter')
                                         time.sleep(1)
+                                        self.count += 1
+                                        self.valid = True
                                     break
                             for _ in range(1):
                                 if self.valid == False:
@@ -219,6 +217,7 @@ class ObjectDetection:
                                         time.sleep(0.1)
                                         keyboard.press_and_release('enter')
                                         time.sleep(1)
+                                        self.count += 1
                                         self.valid = True
 
                                     break
@@ -230,6 +229,7 @@ class ObjectDetection:
                                         time.sleep(0.1)
                                         keyboard.press_and_release('enter')
                                         time.sleep(1)
+                                        self.count += 1
                                         self.valid = True
                                     break
                             for _ in range(1):
@@ -240,6 +240,7 @@ class ObjectDetection:
                                         time.sleep(0.1)
                                         keyboard.press_and_release('enter')
                                         time.sleep(1)
+                                        self.count += 1
                                         self.valid = True
                                     break
                                 
@@ -249,11 +250,12 @@ class ObjectDetection:
                                         my_lable.config(text="Can't decide")
                                         keyboard.press_and_release('enter')
                                         time.sleep(1)
+                                        self.count += 1
                                         self.valid = True
                                     break
                             
                             if self.valid == True:
-                                
+                                print("count: ",self.count,end='\r',flush=True)
                                 self.valid = False
     # A try-except block that is used to catch any exception that might occur in the function.
                         except Exception:
