@@ -11,8 +11,13 @@ import tkinter
 from tkinter import *
 from tkinter import ttk
 from PIL import Image, ImageTk
-import sv_ttk
 import customtkinter
+import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.figure import Figure
+from itertools import count
+import random
 class ObjectDetection:
     
     def __init__(self):
@@ -25,6 +30,10 @@ class ObjectDetection:
         self.device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
         self.valid = False
         self.count = 0
+        self.A_count = 0
+        self.B_count = 0
+        self.C_count = 0
+        self.D_count = 0
         print("\n\nDevice Used:",self.device)
 
 
@@ -81,8 +90,8 @@ class ObjectDetection:
                 bgr = (0, 255, 0)
                 bgr2 = (0, 0, 255)
                 cv2.rectangle(frame, (x1, y1), (x2, y2), bgr, 2)
-                cv2.putText(frame, self.class_to_label(labels[i]), (x1, y1-10), cv2.FONT_HERSHEY_SCRIPT_COMPLEX, 0.9, bgr, 1)
-                cv2.putText(frame, f'{row[4]:.2f}', (x1+10, y1+50), cv2.FONT_HERSHEY_SIMPLEX, 0.9, bgr2, 1)
+                # cv2.putText(frame, self.class_to_label(labels[i]), (x1, y1-10), cv2.FONT_HERSHEY_SCRIPT_COMPLEX, 0.9, bgr, 1)
+                # cv2.putText(frame, f'{row[4]:.2f}', (x1, y1), cv2.FONT_HERSHEY_SIMPLEX, 0.9, bgr2, 1)
         return frame
 # A global variable that is used to lock the thread.
     global locker
@@ -92,26 +101,52 @@ class ObjectDetection:
 
 
     def main(self):  # sourcery skip: merge-nested-ifs
+        
+        def animate(i):
+            x_vals = ['A', 'B', 'C', 'D']
+            y_vals = [self.A_count, self.B_count, self.C_count, self.D_count]
+            plt.cla()  # clear the current axes
+            plt.bar(x_vals, y_vals)
+        
+        
+        
         root=customtkinter.CTk()
         root.title("automation for RemarkOffice software with ML made by ali mostafa")
-        root.geometry("700x500")
+        root.geometry("700x700")
         root.resizable(0,0)
         root.grid_rowconfigure(1, weight=1, minsize=200)
         root.grid_columnconfigure(0, weight=1, minsize=200)
-        frame_1 = customtkinter.CTkFrame(master=root, width=250, height=240, corner_radius=15)
-        frame_1.grid(row=3, column=0, padx=20, pady=20, sticky="nsew")
-        frame_1.grid_columnconfigure(0, weight=1)
-        frame_1.grid_columnconfigure(1, weight=1)
         
-        frame_2 = customtkinter.CTkFrame(master=root, width=200, height=40, corner_radius=15)
-        frame_2.grid(row=1, column=0, padx=20, pady=20, sticky="nsew")
-        frame_2.grid_columnconfigure(0, weight=1)
-        frame_2.grid_columnconfigure(1, weight=1)
         
-        frame_3 = customtkinter.CTkFrame(master=root, width=200, height=40, corner_radius=15)
-        frame_3.grid(row=2, column=0, padx=20, pady=20, sticky="nsew")
-        frame_3.grid_columnconfigure(0, weight=1)
-        frame_3.grid_columnconfigure(1, weight=1)
+        frame_1 = customtkinter.CTkFrame(master=root, width=250, height=240, corner_radius=15)#buttons
+        frame_1.grid(row=4, column=0, padx=20, pady=20, sticky="nsew")#buttons
+        frame_1.grid_columnconfigure(0, weight=1)#buttons
+        frame_1.grid_columnconfigure(1, weight=1)#buttons
+        
+        
+        frame_2 = customtkinter.CTkFrame(master=root, width=200, height=190, corner_radius=15)#video feed
+        frame_2.grid(row=1, column=0, padx=40, pady=40, sticky="ew")#video feed
+        frame_2.grid_columnconfigure(0, weight=1)#video feed
+        frame_2.grid_columnconfigure(1, weight=1)#video feed
+        
+        
+        frame_3 = customtkinter.CTkFrame(master=root, width=200, height=40, corner_radius=15)#letters,counter
+        frame_3.grid(row=2, column=0, padx=20, pady=20, sticky="nsew")#letters,counter
+        frame_3.grid_columnconfigure(0, weight=1)#letters,counter
+        frame_3.grid_columnconfigure(1, weight=1)#letters,counter
+        
+        
+        frame_4 = customtkinter.CTkFrame(master=root, width=200, height=40, corner_radius=15)
+        frame_4.grid(row=3, column=0, padx=20, pady=20, sticky="nsew")
+        frame_4.grid_columnconfigure(0, weight=1)
+        frame_4.grid_columnconfigure(1, weight=1)
+        
+
+        plt.gcf().set_size_inches(5, 2)
+        canvas = FigureCanvasTkAgg(plt.gcf(), master=frame_4)
+        canvas.get_tk_widget().grid(column=0, row=1)
+        ani = FuncAnimation(plt.gcf(), animate, interval=100)
+
         
 
         # sv_ttk.set_theme("dark")
@@ -121,6 +156,7 @@ class ObjectDetection:
 
         my_lable = customtkinter.CTkLabel(frame_3, text=" ",text_font=("Arial", 25),text_color="red")
         my_lable.grid(row=1, column=0)
+        
         my_count = customtkinter.CTkLabel(frame_3, text=" ",text_font=("Arial", 25),text_color="white")
         my_count.grid(row=1, column=1)
 
@@ -149,35 +185,84 @@ class ObjectDetection:
                     results4 = self.score_frame(img4)
                     results_whole = self.score_frame(img_whole)
 
-                    try:
-                        if self.classes[int(results1[0][0])] == 'correct':
-                            # print("letter :A",end='\r',flush=True)
-                            my_lable.configure(text="letter: A")
-                            self.count += 1
-                            my_count.configure(text=self.count)
-                        if self.classes[int(results2[0][0])] == 'correct':
-                            # print("letter :B",end='\r',flush=True)
-                            my_lable.configure(text="letter: B")
-                            self.count += 1
-                            my_count.configure(text=self.count)
+                    def typing_answer():
+                        try:
+                            locker.acquire()
+                            for _ in range(1):
+                                if self.valid == False:
+                                    if self.classes[int(results1[0][0])] == 'correct':
+                                        keyboard.press_and_release('a')
+                                        time.sleep(0.1)
+                                        keyboard.press_and_release('enter')
+                                        time.sleep(1)
+                                        my_lable.configure(text="letter: A")
+                                        self.count += 1
+                                        self.A_count += 1
+                                        my_count.configure(text=self.count)
+                                        self.valid = True
+                                    break
+                            for _ in range(1):
+                                if self.valid == False:
+                                    if self.classes[int(results2[0][0])] == 'correct':
+                                        keyboard.press_and_release('b')
+                                        time.sleep(0.1)
+                                        keyboard.press_and_release('enter')
+                                        time.sleep(1)
+                                        my_lable.configure(text="letter: B")
+                                        self.count += 1
+                                        self.B_count += 1
+                                        my_count.configure(text=self.count)
+                                        self.valid = True
+
+                                    break
+                            for _ in range(1):
+                                if self.valid == False:
+                                    if self.classes[int(results3[0][0])] == 'correct':
+                                        keyboard.press_and_release('c')
+                                        time.sleep(0.1)
+                                        keyboard.press_and_release('enter')
+                                        time.sleep(1)
+                                        my_lable.configure(text="letter: C")
+                                        self.count += 1
+                                        self.C_count += 1
+                                        my_count.configure(text=self.count)
+                                        self.valid = True
+                                    break
+                            for _ in range(1):
+                                if self.valid == False:
+                                    if self.classes[int(results4[0][0])] == 'correct':
+                                        keyboard.press_and_release('d')
+                                        time.sleep(0.1)
+                                        keyboard.press_and_release('enter')
+                                        time.sleep(1)
+                                        my_lable.configure(text="letter: D")
+                                        self.count += 1
+                                        self.D_count += 1
+                                        my_count.configure(text=self.count)
+                                        self.valid = True
+                                    break
+                                
+                            for _ in range(1):
+                                if self.valid == False:
+                                    if self.classes[int(results4[0][0])] != 'correct' and self.classes[int(results3[0][0])] != 'correct' and self.classes[int(results2[0][0])] != 'correct' and self.classes[int(results1[0][0])] != 'correct':
+                                        my_lable.configure(text="Can't detect")
+                                        keyboard.press_and_release('enter')
+                                        time.sleep(1)
+                                        self.count += 1
+                                        self.valid = True
+                                    break
                             
-                        if self.classes[int(results3[0][0])] == 'correct':
-                            # print("letter :C",end='\r',flush=True)
-                            my_lable.configure(text="letter: C")
-                            self.count += 1
-                            my_count.configure(text=self.count)
-                            
-                        if self.classes[int(results4[0][0])] == 'correct':
-                            # print("letter :D",end='\r',flush=True)
-                            my_lable.configure(text="letter: D")
-                            self.count += 1
-                            my_count.configure(text=self.count)
-                            
-                    except Exception:
-                        # print("Can't detect", end='\r', flush=True)
-                        my_lable.configure(text="Can't detect")
+                            if self.valid == True:
+                                print("count: ",self.count,end='\r',flush=True)
+                                self.valid = False
+                        # A try-except block that is used to catch any exception that might occur in the function.
+                        except Exception:
+                            print("Can't detect", end='\r', flush=True)
+                        finally:
+                            locker.release()
+                    threading.Thread(target=typing_answer).start()
                     
-                    print(self.count)
+                    
                     # img = self.plot_boxes(results1, img)
                     img1 = self.plot_boxes(results1, img1)
                     img2 = self.plot_boxes(results2, img2)
@@ -194,10 +279,6 @@ class ObjectDetection:
                                                 compound="right", command=maingui)
         button_1.grid(row=2, column=0, columnspan=2, padx=20, pady=(20, 10), sticky="ew")
 
-        button_2 = customtkinter.CTkButton(master=frame_1, text="Stop", height=32,
-                                                compound="right", fg_color="#D35B58", hover_color="#C77C78",
-                                                command=stop)
-        button_2.grid(row=3, column=0, columnspan=2, padx=20, pady=10, sticky="ew")
 
 
         # sv_ttk.set_theme("dark")
