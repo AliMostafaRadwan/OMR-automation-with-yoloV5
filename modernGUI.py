@@ -147,7 +147,6 @@ class ObjectDetection:
         canvas.get_tk_widget().grid(column=0, row=1)
         ani = FuncAnimation(plt.gcf(), animate, interval=100)
 
-        
 
         # sv_ttk.set_theme("dark")
         ####
@@ -178,6 +177,11 @@ class ObjectDetection:
                     img2 = bottom2[230:390, 1050:1200]
                     img1 = bottom1[230:390, 1190:1380]
                     img_whole = bottom_whole[230:390, 760:1380]
+                    if lang_check_button.get():
+                        img1 = bottom4[230:390, 740:900]
+                        img2 = bottom3[230:390, 900:1050]
+                        img3 = bottom2[230:390, 1050:1200]
+                        img4 = bottom1[230:390, 1190:1380]
 
                     results1 = self.score_frame(img1)
                     results2 = self.score_frame(img2)
@@ -278,10 +282,12 @@ class ObjectDetection:
         button_1 = customtkinter.CTkButton(master=frame_1, text="Start", height=32,
                                                 compound="right", command=maingui)
         button_1.grid(row=2, column=0, columnspan=2, padx=20, pady=(20, 10), sticky="ew")
+        
+        lang_check_button = customtkinter.CTkCheckBox(master=frame_1,
+                                                        text="English")
+        lang_check_button.grid(row=1, column=1, pady=10, padx=20,sticky="nsew")
 
 
-
-        # sv_ttk.set_theme("dark")
 
         root.mainloop()
 
