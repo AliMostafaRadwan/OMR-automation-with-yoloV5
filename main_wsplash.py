@@ -1,5 +1,3 @@
-
-from multiprocessing.resource_sharer import stop
 import torch
 import numpy as np
 import cv2
@@ -7,17 +5,12 @@ import mss
 import threading
 import keyboard
 import time
-import tkinter
 from tkinter import *
-from tkinter import ttk
 from PIL import Image, ImageTk
 import customtkinter
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from matplotlib.figure import Figure
-from itertools import count
-import random
 class ObjectDetection:
     
     def __init__(self):
@@ -43,7 +36,7 @@ class ObjectDetection:
     """
 
     def load_model(self):
-        return torch.hub.load('model_repo\yolov5', model='custom', path='best.pt', source='local', force_reload=True)
+        return torch.hub.load('model_repo\yolov5', model='custom', path='src/best.pt', source='local', force_reload=True)
 
     """
     > The function takes a single frame as input, and returns the labels and coordinates of the detected
@@ -99,6 +92,23 @@ class ObjectDetection:
     def __call__(self):
         threading.Thread(target=self.main).start()
 
+#____________________________splash screen (start)_________________________________
+
+    w=Tk()
+
+    #Using piece of code from old splash screen
+    width_of_window = 427
+    height_of_window = 250
+    screen_width = w.winfo_screenwidth()
+    screen_height = w.winfo_screenheight()
+    x_coordinate = (screen_width/2)-(width_of_window/2)
+    y_coordinate = (screen_height/2)-(height_of_window/2)
+    w.geometry("%dx%d+%d+%d" %(width_of_window,height_of_window,x_coordinate,y_coordinate))
+    #w.configure(bg='#ED1B76')
+    w.overrideredirect(1) #for hiding titlebar
+
+#____________________________splash screen_________________________________
+
 
     def main(self):  # sourcery skip: merge-nested-ifs
         
@@ -115,8 +125,7 @@ class ObjectDetection:
         root.geometry("700x700")
         root.resizable(0,0)
         root.grid_rowconfigure(1, weight=1, minsize=200)
-        root.grid_columnconfigure(0, weight=1, minsize=200)
-        
+        root.grid_columnconfigure(0, weight=1, minsize=200)        
         
         frame_1 = customtkinter.CTkFrame(master=root, width=250, height=240, corner_radius=15)#buttons
         frame_1.grid(row=4, column=0, padx=20, pady=20, sticky="nsew")#buttons
@@ -125,7 +134,7 @@ class ObjectDetection:
         
         
         frame_2 = customtkinter.CTkFrame(master=root, width=200, height=190, corner_radius=15)#video feed
-        frame_2.grid(row=1, column=0, padx=40, pady=40, sticky="ew")#video feed
+        frame_2.grid(row=1, column=0, padx=20, pady=40, sticky="ew")#video feed
         frame_2.grid_columnconfigure(0, weight=1)#video feed
         frame_2.grid_columnconfigure(1, weight=1)#video feed
         
@@ -142,7 +151,7 @@ class ObjectDetection:
         frame_4.grid_columnconfigure(1, weight=1)
         
 
-        plt.gcf().set_size_inches(5, 2)
+        plt.gcf().set_size_inches(8, 2.3)
         canvas = FigureCanvasTkAgg(plt.gcf(), master=frame_4)
         canvas.get_tk_widget().grid(column=0, row=1)
         ani = FuncAnimation(plt.gcf(), animate, interval=100)
@@ -177,7 +186,9 @@ class ObjectDetection:
                     img2 = bottom2[230:390, 1050:1200]
                     img1 = bottom1[230:390, 1190:1380]
                     img_whole = bottom_whole[230:390, 760:1380]
-                    if lang_check_button.get():
+                    
+                    
+                    if lang_check_button.get():# language checkbox (English)
                         img1 = bottom4[230:390, 740:900]
                         img2 = bottom3[230:390, 900:1050]
                         img3 = bottom2[230:390, 1050:1200]
@@ -277,6 +288,7 @@ class ObjectDetection:
                     img_update = ImageTk.PhotoImage(Image.fromarray(img_whole))
                     image_panel.configure(image=img_update)
                     image_panel.image=img_update
+                    image_panel.pack()
                     image_panel.update()
 
         button_1 = customtkinter.CTkButton(master=frame_1, text="Start", height=32,
@@ -287,9 +299,61 @@ class ObjectDetection:
                                                         text="English")
         lang_check_button.grid(row=1, column=1, pady=10, padx=20,sticky="nsew")
 
-
-
         root.mainloop()
+
+
+
+#____________________________splash screen (start.cont)_________________________________
+
+    Frame(w, width=427, height=250, bg='#272727').place(x=0,y=0)
+    label1=Label(w, text='OMR AUTOMATION', fg='white', bg='#272727') #decorate it 
+    label1.configure(font=("Game Of Squids", 24, "bold"))   #You need to install this font in your PC or try another one
+    label1.place(x=80,y=90)
+
+    label2=Label(w, text='Loading...', fg='white', bg='#272727') #decorate it 
+    label2.configure(font=("Calibri", 14),justify='center')
+    label2.place(x=10,y=215)
+
+    #making animation
+
+    image_a=ImageTk.PhotoImage(Image.open('D:\CODE\OMR-automation-with-yoloV5\src\splash\c2.png'))
+    image_b=ImageTk.PhotoImage(Image.open('D:\CODE\OMR-automation-with-yoloV5\src\splash\c1.png'))
+
+
+
+
+    for i in range(5): #5loops
+        l1=Label(w, image=image_a, border=0, relief=SUNKEN).place(x=180, y=145)
+        l2=Label(w, image=image_b, border=0, relief=SUNKEN).place(x=200, y=145)
+        l3=Label(w, image=image_b, border=0, relief=SUNKEN).place(x=220, y=145)
+        l4=Label(w, image=image_b, border=0, relief=SUNKEN).place(x=240, y=145)
+        w.update_idletasks()
+        time.sleep(0.5)
+
+        l1=Label(w, image=image_b, border=0, relief=SUNKEN).place(x=180, y=145)
+        l2=Label(w, image=image_a, border=0, relief=SUNKEN).place(x=200, y=145)
+        l3=Label(w, image=image_b, border=0, relief=SUNKEN).place(x=220, y=145)
+        l4=Label(w, image=image_b, border=0, relief=SUNKEN).place(x=240, y=145)
+        w.update_idletasks()
+        time.sleep(0.5)
+
+        l1=Label(w, image=image_b, border=0, relief=SUNKEN).place(x=180, y=145)
+        l2=Label(w, image=image_b, border=0, relief=SUNKEN).place(x=200, y=145)
+        l3=Label(w, image=image_a, border=0, relief=SUNKEN).place(x=220, y=145)
+        l4=Label(w, image=image_b, border=0, relief=SUNKEN).place(x=240, y=145)
+        w.update_idletasks()
+        time.sleep(0.5)
+
+        l1=Label(w, image=image_b, border=0, relief=SUNKEN).place(x=180, y=145)
+        l2=Label(w, image=image_b, border=0, relief=SUNKEN).place(x=200, y=145)
+        l3=Label(w, image=image_b, border=0, relief=SUNKEN).place(x=220, y=145)
+        l4=Label(w, image=image_a, border=0, relief=SUNKEN).place(x=240, y=145)
+        w.update_idletasks()
+        time.sleep(0.5)
+
+    w.destroy()
+    w.mainloop()
+    #____________________________splash screen (end)_________________________________
 
 
 # Creating a new process for the green_cell function
