@@ -179,6 +179,8 @@ class App(customtkinter.CTk):
 
     def button_event(self):
         print("Button pressed")
+        print(self.slider_2.value)
+        
 
     def change_appearance_mode(self, new_appearance_mode):
         customtkinter.set_appearance_mode(new_appearance_mode)

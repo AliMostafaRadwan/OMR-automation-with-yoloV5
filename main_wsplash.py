@@ -78,13 +78,14 @@ class ObjectDetection:
         x_shape, y_shape = frame.shape[1], frame.shape[0]
         for i in range(n):
             row = cord[i]
-            if row[4] >= 0.4:
+            if row[4] >= slider_1.value:
                 x1, y1, x2, y2 = int(row[0]*x_shape), int(row[1]*y_shape), int(row[2]*x_shape), int(row[3]*y_shape)
                 bgr = (0, 255, 0)
                 bgr2 = (0, 0, 255)
                 cv2.rectangle(frame, (x1, y1), (x2, y2), bgr, 2)
-                # cv2.putText(frame, self.class_to_label(labels[i]), (x1, y1-10), cv2.FONT_HERSHEY_SCRIPT_COMPLEX, 0.9, bgr, 1)
-                # cv2.putText(frame, f'{row[4]:.2f}', (x1, y1), cv2.FONT_HERSHEY_SIMPLEX, 0.9, bgr2, 1)
+                if lable_check_button.get():
+                    cv2.putText(frame, self.class_to_label(labels[i]), (x1, y1-10), cv2.FONT_HERSHEY_SCRIPT_COMPLEX, 0.9, bgr, 1)
+                    cv2.putText(frame, f'{row[4]:.2f}', (x1, y1), cv2.FONT_HERSHEY_SIMPLEX, 0.9, bgr2, 1)
         return frame
 # A global variable that is used to lock the thread.
     global locker
@@ -123,7 +124,7 @@ class ObjectDetection:
         root=customtkinter.CTk()
         root.title("automation for RemarkOffice software with ML made by ali mostafa")
         root.geometry("700x700")
-        root.resizable(0,0)
+        # root.resizable(0,0)
         root.grid_rowconfigure(1, weight=1, minsize=200)
         root.grid_columnconfigure(0, weight=1, minsize=200)        
         
@@ -224,6 +225,7 @@ class ObjectDetection:
                                         keyboard.press_and_release('enter')
                                         time.sleep(1)
                                         my_lable.configure(text="letter: B")
+
                                         self.count += 1
                                         self.B_count += 1
                                         my_count.configure(text=self.count)
@@ -266,7 +268,7 @@ class ObjectDetection:
                                         self.count += 1
                                         self.valid = True
                                     break
-                            
+
                             if self.valid == True:
                                 print("count: ",self.count,end='\r',flush=True)
                                 self.valid = False
@@ -276,8 +278,8 @@ class ObjectDetection:
                         finally:
                             locker.release()
                     threading.Thread(target=typing_answer).start()
-                    
-                    
+
+
                     # img = self.plot_boxes(results1, img)
                     img1 = self.plot_boxes(results1, img1)
                     img2 = self.plot_boxes(results2, img2)
@@ -294,10 +296,23 @@ class ObjectDetection:
         button_1 = customtkinter.CTkButton(master=frame_1, text="Start", height=32,
                                                 compound="right", command=maingui)
         button_1.grid(row=2, column=0, columnspan=2, padx=20, pady=(20, 10), sticky="ew")
-        
+
         lang_check_button = customtkinter.CTkCheckBox(master=frame_1,
                                                         text="English")
-        lang_check_button.grid(row=1, column=1, pady=10, padx=20,sticky="nsew")
+        lang_check_button.grid(row=0, column=0, pady=10,sticky="s")
+        
+        global lable_check_button
+        lable_check_button = customtkinter.CTkCheckBox(master=frame_1,
+                                                        text="show lables")
+        lable_check_button.grid(row=0, column=1,columnspan=2, pady=10, padx=20,sticky="e")
+
+
+        global slider_1
+        slider_1 = customtkinter.CTkSlider(master=frame_1,
+                                                from_=0,
+                                                to=0.99,
+                                                )
+        slider_1.grid(row=1, column=0, columnspan=2, pady=10, padx=20, sticky="we")
 
         root.mainloop()
 
