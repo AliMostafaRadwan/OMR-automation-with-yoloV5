@@ -11,6 +11,12 @@ import customtkinter
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import os
+import sys
+
+
+# if not os.geteuid() == 0:
+#     sys.exit("\nOnly root can run this script\n")
 class ObjectDetection:
     
     def __init__(self):
@@ -20,7 +26,7 @@ class ObjectDetection:
         # run it on gpu if available
         self.model = self.load_model()
         self.classes = self.model.names
-        self.device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
+        self.device = torch.device('cuda') #if torch.cuda.is_available() else torch.device('cpu')
         self.valid = False
         self.count = 0
         self.A_count = 0
@@ -36,7 +42,7 @@ class ObjectDetection:
     """
 
     def load_model(self):
-        return torch.hub.load('model_repo\yolov5', model='custom', path='src/best.pt', source='local', force_reload=True)
+        return torch.hub.load('model_repo/yolov5', model='custom', path='src/best.pt', source='local', force_reload=True)
 
     """
     > The function takes a single frame as input, and returns the labels and coordinates of the detected
@@ -50,6 +56,7 @@ class ObjectDetection:
         frame = [frame]
         results = self.model(frame)
         labels, cord = results.xyxyn[0][:, -1], results.xyxyn[0][:, :-1]
+        
         return labels, cord
 
     """
@@ -123,7 +130,7 @@ class ObjectDetection:
         
         root=customtkinter.CTk()
         root.title("automation for RemarkOffice software with ML made by ali mostafa")
-        root.geometry("700x700")
+        root.geometry("700x730")
         # root.resizable(0,0)
         root.grid_rowconfigure(1, weight=1, minsize=200)
         root.grid_columnconfigure(0, weight=1, minsize=200)        
@@ -187,8 +194,8 @@ class ObjectDetection:
                     img2 = bottom2[230:390, 1050:1200]
                     img1 = bottom1[230:390, 1190:1380]
                     img_whole = bottom_whole[230:390, 760:1380]
-                    
-                    
+
+
                     if lang_check_button.get():# language checkbox (English)
                         img1 = bottom4[230:390, 740:900]
                         img2 = bottom3[230:390, 900:1050]
@@ -200,6 +207,7 @@ class ObjectDetection:
                     results3 = self.score_frame(img3)
                     results4 = self.score_frame(img4)
                     results_whole = self.score_frame(img_whole)
+
 
                     def typing_answer():
                         try:
@@ -216,6 +224,7 @@ class ObjectDetection:
                                         self.A_count += 1
                                         my_count.configure(text=self.count)
                                         self.valid = True
+                                        print(self.classes[int(results1[0][0])])
                                     break
                             for _ in range(1):
                                 if self.valid == False:
@@ -273,14 +282,17 @@ class ObjectDetection:
                                 print("count: ",self.count,end='\r',flush=True)
                                 self.valid = False
                         # A try-except block that is used to catch any exception that might occur in the function.
-                        except Exception:
+                        except Exception as e:
                             print("Can't detect", end='\r', flush=True)
+                            print(e)
+                            
                         finally:
                             locker.release()
+                            
                     threading.Thread(target=typing_answer).start()
 
 
-                    # img = self.plot_boxes(results1, img)
+                    
                     img1 = self.plot_boxes(results1, img1)
                     img2 = self.plot_boxes(results2, img2)
                     img3 = self.plot_boxes(results3, img3)
@@ -300,7 +312,7 @@ class ObjectDetection:
         lang_check_button = customtkinter.CTkCheckBox(master=frame_1,
                                                         text="English")
         lang_check_button.grid(row=0, column=0, pady=10,sticky="s")
-        
+
         global lable_check_button
         lable_check_button = customtkinter.CTkCheckBox(master=frame_1,
                                                         text="show lables")
@@ -311,6 +323,7 @@ class ObjectDetection:
         slider_1 = customtkinter.CTkSlider(master=frame_1,
                                                 from_=0,
                                                 to=0.99,
+                                                
                                                 )
         slider_1.grid(row=1, column=0, columnspan=2, pady=10, padx=20, sticky="we")
 
@@ -322,7 +335,7 @@ class ObjectDetection:
 
     Frame(w, width=427, height=250, bg='#272727').place(x=0,y=0)
     label1=Label(w, text='OMR AUTOMATION', fg='white', bg='#272727') #decorate it 
-    label1.configure(font=("Game Of Squids", 24, "bold"))   #You need to install this font in your PC or try another one
+    label1.configure(font=("Game Of Squids", 20, "bold"))   #You need to install this font in your PC or try another one
     label1.place(x=80,y=90)
 
     label2=Label(w, text='Loading...', fg='white', bg='#272727') #decorate it 
@@ -331,8 +344,8 @@ class ObjectDetection:
 
     #making animation
 
-    image_a=ImageTk.PhotoImage(Image.open('D:\CODE\OMR-automation-with-yoloV5\src\splash\c2.png'))
-    image_b=ImageTk.PhotoImage(Image.open('D:\CODE\OMR-automation-with-yoloV5\src\splash\c1.png'))
+    image_a=ImageTk.PhotoImage(Image.open('src/splash/c2.png'))
+    image_b=ImageTk.PhotoImage(Image.open('src/splash/c1.png'))
 
 
 

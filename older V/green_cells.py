@@ -1,7 +1,7 @@
 import mss
 import cv2
 import numpy as np
-import pyautogui
+# import pyautogui
 def green_cell():
     with mss.mss() as sct:
         monitor = {"top": 0, "left": 0, "width": 1920, "height": 1080}

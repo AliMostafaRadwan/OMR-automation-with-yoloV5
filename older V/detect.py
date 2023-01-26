@@ -2,13 +2,11 @@ import torch
 import numpy as np
 import cv2
 import mss
-import win32api
 from green_cells import green_cell , IS_EMPTY
 import threading
 import keyboard
 import time
 import multiprocessing
-import pyautogui
 import os
 class ObjectDetection:
     
@@ -21,7 +19,7 @@ class ObjectDetection:
         print("\n\nDevice Used:",self.device)
 
     def load_model(self):
-        return torch.hub.load('model_repo\yolov5', model='custom', path='best.pt', source='local', force_reload=True)
+        return torch.hub.load('model_repo\yolov5', model='custom', path='src/best.pt', source='local', force_reload=True)
 
 
     def score_frame(self, frame):
@@ -108,16 +106,11 @@ class ObjectDetection:
                     cv2.destroyAllWindows()
                     break
 
-                if win32api.GetAsyncKeyState(0x1B):
-                    # kill the terminal
-                    os.system("taskkill /f /im cmd.exe")
-                    break
-
 
 if __name__ == '__main__':
-    locker.acquire()
-    p1 = multiprocessing.Process(target=green_cell)
-    p1.start()
-    locker.release()
+    # locker.acquire()
+    # p1 = multiprocessing.Process(target=green_cell)
+    # p1.start()
+    # locker.release()
     detection = ObjectDetection()
     detection()
