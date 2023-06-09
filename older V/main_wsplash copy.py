@@ -11,22 +11,15 @@ import customtkinter
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-import os
-import sys
-import pynput
-from pynput.keyboard import Key, Controller
-
 
 class ObjectDetection:
     
     def __init__(self):
-        """
-        The function loads the model, gets the classes, and sets the device to GPU if available
-        """
+
         # run it on gpu if available
         self.model = self.load_model()
         self.classes = self.model.names
-        self.device =  'cuda' if torch.cuda.is_available() else 'cpu'
+        self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
         self.valid = False
         self.count = 0
         self.A_count = 0
@@ -35,23 +28,12 @@ class ObjectDetection:
         self.D_count = 0
         print("\n\nDevice Used:",self.device)
 
-        
 
-    """
-    > Loads the model from the path specified in the function
-    :return: The model is being returned.
-    """
 
     def load_model(self):
         return torch.hub.load('model_repo/yolov5', model='custom', path='src/best.pt', source='local', force_reload=True)
 
-    """
-    > The function takes a single frame as input, and returns the labels and coordinates of the detected
-    objects
-    
-    :param frame: a single image
-    :return: The labels and the cordinates of the bounding boxes.
-    """
+
     def score_frame(self, frame):
         self.model.to(self.device)
         frame = [frame]
@@ -60,26 +42,13 @@ class ObjectDetection:
         
         return labels, cord
 
-    """
-    > This function takes in a class number and returns the corresponding class label
-    
-    :param x: the input data
-    :return: The class of the image.
-    """
+
 
     def class_to_label(self, x):
         return self.classes[int(x)]
 
 
-    """
-    > The function takes in the results of the model and the frame, and returns the frame with the boxes
-    drawn on it
-    
-    :param results: a list of tuples, each tuple contains the label and the coordinates of the bounding
-    box
-    :param frame: The image to be processed
-    :return: the frame with the boxes drawn on it.
-    """
+
     def plot_boxes(self, results, frame):
         labels, cord = results
         n = len(labels)
@@ -211,86 +180,32 @@ class ObjectDetection:
 
 
                     def typing_answer():
-                        keyboard = Controller()
                         try:
                             locker.acquire()
-                            for _ in range(1):
-                                if self.valid == False:
-                                    if self.classes[int(results1[0][0])] == 'correct':
-                                        keyboard.type('a')
-                                        time.sleep(0.1)
-                                        keyboard.type('enter')
-                                        time.sleep(1)
-                                        my_lable.configure(text="letter: A")
-                                        self.count += 1
-                                        self.A_count += 1
-                                        my_count.configure(text=self.count)
-                                        self.valid = True
-                                        print(self.classes[int(results1[0][0])])
+                            for results in (results1, results2, results3, results4):
+                                if self.valid:
                                     break
-                            for _ in range(1):
-                                if self.valid == False:
-                                    if self.classes[int(results2[0][0])] == 'correct':
-                                        keyboard.type('b')
-                                        time.sleep(0.1)
-                                        keyboard.type('enter')
-                                        time.sleep(1)
-                                        my_lable.configure(text="letter: B")
-
-                                        self.count += 1
-                                        self.B_count += 1
-                                        my_count.configure(text=self.count)
-                                        self.valid = True
-
-                                    break
-                            for _ in range(1):
-                                if self.valid == False:
-                                    if self.classes[int(results3[0][0])] == 'correct':
-                                        keyboard.type('c')
-                                        time.sleep(0.1)
-                                        keyboard.type('enter')
-                                        time.sleep(1)
-                                        my_lable.configure(text="letter: C")
-                                        self.count += 1
-                                        self.C_count += 1
-                                        my_count.configure(text=self.count)
-                                        self.valid = True
-                                    break
-                            for _ in range(1):
-                                if self.valid == False:
-                                    if self.classes[int(results4[0][0])] == 'correct':
-                                        keyboard.type('d')
-                                        time.sleep(0.1)
-                                        keyboard.type('enter')
-                                        time.sleep(1)
-                                        my_lable.configure(text="letter: D")
-                                        self.count += 1
-                                        self.D_count += 1
-                                        my_count.configure(text=self.count)
-                                        self.valid = True
-                                    break
-                                
-                            for _ in range(1):
-                                if self.valid == False:
-                                    if self.classes[int(results4[0][0])] != 'correct' and self.classes[int(results3[0][0])] != 'correct' and self.classes[int(results2[0][0])] != 'correct' and self.classes[int(results1[0][0])] != 'correct':
-                                        my_lable.configure(text="Can't detect")
-                                        keyboard.type('enter')
-                                        time.sleep(1)
-                                        self.count += 1
-                                        self.valid = True
-                                    break
-
-                            if self.valid == True:
-                                print("count: ",self.count,end='\r',flush=True)
-                                self.valid = False
-                        # A try-except block that is used to catch any exception that might occur in the function.
-                        except Exception as e:
-                            print("Can't detect", end='\r', flush=True)
-                            print(e)
-                            
+                                if self.classes[int(results[0][0])] == 'correct':
+                                    letter = 'abcd'[(results1, results2, results3, results4).index(results)]
+                                    
+                                    #keyboard.press_and_release(letter)
+                                    time.sleep(0.1)
+                                    #keyboard.press_and_release('enter')
+                                    time.sleep(1)
+                                    my_lable.configure(text=f"letter: {letter.upper()}")
+                                    self.count += 1
+                                    setattr(self, f"{letter.upper()}_count", 1)
+                                    my_count.configure(text=self.count)
+                                    self.valid = True
+                            else:
+                                my_lable.configure(text="Can't detect")
+                                #keyboard.press_and_release('enter')
+                                time.sleep(1)
+                                self.count += 1
+                                self.valid = True
                         finally:
                             locker.release()
-                            
+
                     threading.Thread(target=typing_answer).start()
 
 
@@ -332,38 +247,6 @@ class ObjectDetection:
         root.mainloop()
 
 
-
-#____________________________splash screen (start.cont)_________________________________
-
-    Frame(w, width=427, height=250, bg='#272727').place(x=0,y=0)
-    label1=Label(w, text='OMR AUTOMATION', fg='white', bg='#272727') #decorate it 
-    label1.configure(font=("Game Of Squids", 20, "bold"))   #You need to install this font in your PC or try another one
-    label1.place(x=80,y=90)
-
-    label2=Label(w, text='Loading...', fg='white', bg='#272727') #decorate it 
-    label2.configure(font=("Calibri", 14),justify='center')
-    label2.place(x=10,y=215)
-
-    #making animation
-
-    image_paths = ['src/splash/c2.png', 'src/splash/c1.png']
-    images = [ImageTk.PhotoImage(Image.open(path)) for path in image_paths]
-
-    animation_labels = []
-    for i in range(4):
-        label = Label(w, image=images[1], border=0, relief=SUNKEN)
-        label.place(x=180 + i*20, y=145)
-        animation_labels.append(label)
-
-    for j in range(5):
-        for i, label in enumerate(animation_labels):
-            label.configure(image=images[i % 2])
-            w.update_idletasks()
-            time.sleep(0.5)
-
-    w.destroy()
-    w.mainloop()
-    #____________________________splash screen (end)_________________________________
 
 
 # Creating a new process for the green_cell function
